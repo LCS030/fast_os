@@ -14,18 +14,16 @@ export default function Chamados() {
 
   const carregarChamados = async () => {
     try {
-      console.log("🔄 Carregando chamados...");
       const resposta = await listarChamados();
 
       if (resposta && Array.isArray(resposta)) {
-        console.log("✅ Chamados recebidos:", resposta);
         setChamados(resposta);
-      } else {
-        console.warn("⚠️ Resposta inesperada:", resposta);
+      } 
+      else {
         setErro("Formato de resposta inválido da API.");
       }
-    } catch (error) {
-      console.error("❌ Erro ao carregar chamados:", error);
+    } 
+    catch (error) {
       setErro("Erro ao carregar os chamados. Verifique sua conexão.");
     } finally {
       setLoading(false);

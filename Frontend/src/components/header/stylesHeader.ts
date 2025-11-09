@@ -34,6 +34,8 @@ export const styles = StyleSheet.create({
     logo: {
         width: 130, 
         height: 40,
-        backgroundColor: colors.gray[100]
+        backgroundColor: colors.gray[100],
+        borderBottomRightRadius: 20,
+        borderTopLeftRadius: 20
     },
 });
