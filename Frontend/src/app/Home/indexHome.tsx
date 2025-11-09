@@ -7,7 +7,7 @@ import { styles } from "./stylesHome";
 export default function Home () {
     const handleLogout = () => {
         console.log("Logout Clicado. Implementar lógica aqui.");
-        // #ToDo navigation.navigate('Login'); // Ação real
+        // TO DO: navigation.navigate('Login'); // Ação real
     };
     
     return(
@@ -17,7 +17,7 @@ export default function Home () {
             <View style={styles.container}>
                 <View style={styles.block}>
 
-                    <TouchableOpacity activeOpacity={0.5} style={styles.card} onPress={() => router.navigate("./Chamados/indexChamados")}>
+                    <TouchableOpacity activeOpacity={0.5} style={styles.card} onPress={() => router.push("../Chamados/indexChamados")}>
                         <MaterialIcons name="list" style={styles.icon} />
                         <Text style={styles.cardText}>Chamados</Text>
                     </TouchableOpacity>

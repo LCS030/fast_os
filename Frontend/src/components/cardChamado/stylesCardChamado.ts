@@ -1,36 +1,59 @@
-import { colors } from "@/styles/Colors";
 import { StyleSheet } from "react-native";
+import { colors } from "@/styles/Colors";
 
 export const styles = StyleSheet.create({
-  cardContainer: {
+  card: {
     backgroundColor: colors.blue[900],
-    width: "100%",
-    marginTop: 30,
-    padding: 20,
+    borderRadius: 12,
+    padding: 16,
+    marginVertical: 8,
+    marginHorizontal: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 3,
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 8,
+    marginBottom: 6,
   },
-  title: {
-    color: colors.gray[100],
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  verTexto: {
-    color: colors.gray[100],
+  pedido: {
     fontSize: 16,
+    fontWeight: "bold",
+    color: colors.gray[100],
+  },
+  status: {
+    fontSize: 14,
+    color: colors.gray[100],
+    fontWeight: "600",
+  },
+  footer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  info: {
+    fontSize: 13,
+    color: colors.gray[100],
   },
   osContainer: {
-    backgroundColor: colors.gray[200],
-    padding: 15,
-    marginVertical: 4,
+    marginTop: 15,
+    backgroundColor: colors.gray[100],
+    borderRadius: 8,
+    padding: 10,
   },
-  osText: {
-    fontSize: 14,
-    color: colors.blue[900],
-    fontWeight: "bold"
+  botaoDetalhe: {
+    backgroundColor: colors.blue[900],
+    borderRadius: 8,
+    paddingVertical: 8,
+    marginTop: 4,
+  },
+  textoBotao: {
+    color: "#fff",
+    fontSize: 13,
+    textAlign: "center",
+    fontWeight: "600",
   },
 });

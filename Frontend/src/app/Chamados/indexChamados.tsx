@@ -1,79 +1,76 @@
+import React, { useEffect, useState } from "react";
+import { View, Text, ScrollView, ActivityIndicator } from "react-native";
 import { listarChamados } from "@/api/chamados";
 import { CardChamado } from "@/components/cardChamado/indexCardChamado";
-import { Header } from "@/components/header/indexHeader";
-import { router, useFocusEffect } from "expo-router";
-import React, { useCallback, useState } from "react";
-import { ActivityIndicator, FlatList, View } from "react-native";
 import { styles } from "./stylesChamados";
-
-interface OS {
-    id: number;
-    codigo: string;
-  }
-  interface Chamado {
-    id: number;
-    titulo?: string;
-    nome_cliente?: string;
-    visitas?: OS[];
-  }
+import { colors } from "@/styles/Colors";
+import { Header } from "@/components/header/indexHeader";
+import { router } from "expo-router";
 
 export default function Chamados() {
-  const [chamados, setChamados] = useState<Chamado[]>([]);
+  const [chamados, setChamados] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [erro, setErro] = useState<string | null>(null);
 
-  useFocusEffect(
-    useCallback(() => {
-      let isActive = true;
+  const carregarChamados = async () => {
+    try {
+      console.log("🔄 Carregando chamados...");
+      const resposta = await listarChamados();
 
-      const carregarChamados = async () => {
-        setLoading(true);
-        try {
-          // Chama a função que consome a API
-          const data = await listarChamados();
+      if (resposta && Array.isArray(resposta)) {
+        console.log("✅ Chamados recebidos:", resposta);
+        setChamados(resposta);
+      } else {
+        console.warn("⚠️ Resposta inesperada:", resposta);
+        setErro("Formato de resposta inválido da API.");
+      }
+    } catch (error) {
+      console.error("❌ Erro ao carregar chamados:", error);
+      setErro("Erro ao carregar os chamados. Verifique sua conexão.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-          // Atualiza o estado apenas se o componente ainda estiver ativo
-          if (isActive) setChamados(data);
-        } catch (error) {
-          console.error("Erro ao buscar chamados:", error);
-        } finally {
-          setLoading(false);
-        }
-      };
+  useEffect(() => {
+    carregarChamados();
+  }, []);
 
-      carregarChamados();
-
-      // Cleanup quando sai da tela
-      return () => {
-        isActive = false;
-      };
-    }, [])
-  );
-
-  // Enquanto carrega, mostra um indicador
   if (loading) {
     return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" />
+      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
+        <ActivityIndicator size="large" color={colors.blue[900]} />
+      </View>
+    );
+  }
+
+  if (erro) {
+    return (
+      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
+        <Text style={{ color: "red", fontSize: 16 }}>{erro}</Text>
+      </View>
+    );
+  }
+
+  if (!chamados.length) {
+    return (
+      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
+        <Text style={{ color: "#666", fontSize: 16 }}>Nenhum chamado encontrado.</Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <Header leftIconName="arrow-back" onLeftIconPress={() => router.back()} />
-      
-        <FlatList
-        data={chamados}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-            <CardChamado
-            titulo={item.titulo || item.nome_cliente || `Chamado #${item.id}`}
-            osList={item.visitas || []}
-            onVerPress={() => router.push(`./indexDetalheChamado/${item.id}`)}
-            />
-        )}
-        contentContainerStyle={{ paddingBottom: 40 }}
-        />
+    <View style={{flex: 1}}>
+      <Header leftIconName={'arrow-back'} onLeftIconPress={() => router.back()}/>
+      <View style={styles.container}>
+        <ScrollView style={{marginTop: 20}}>
+        {chamados.map((item) => (
+          <CardChamado key={item.id} chamado={item} />
+        ))}
+      </ScrollView>
+      </View>
     </View>
+    
   );
 }

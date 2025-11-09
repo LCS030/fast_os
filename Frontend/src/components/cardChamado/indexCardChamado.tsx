@@ -1,55 +1,75 @@
-import { styles } from "@/components/cardChamado/stylesCardChamado";
 import React, { useState } from "react";
-import { FlatList, LayoutAnimation, Platform, Text, TouchableOpacity, UIManager, View } from "react-native";
+import { View, Text, TouchableOpacity, LayoutAnimation, Platform, UIManager } from "react-native";
+import { styles } from "./stylesCardChamado";
+import { useRouter } from "expo-router";
+import { CardOS } from "../cardOS/indexCardOS";
 
-interface OS {
-  id: number;
-  codigo: string;
-}
-
-interface CardChamadoProps {
-  titulo: string;
-  osList: OS[];
-  onVerPress: () => void; // função que leva pra tela de detalhes
-}
-
-// Habilitar animação no Android
+// Habilita animações suaves no Android
 if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-export function CardChamado({ titulo, osList, onVerPress }: CardChamadoProps) {
-  const [aberto, setAberto] = useState(false);
+interface CardChamadoProps {
+  chamado: {
+    id: number;
+    nome_cliente: string;
+    pedido: string;
+    status: string;
+    descricao_cliente: string;
+    data_agendamento: string;
+  };
+}
 
-  const handleToggle = () => {
+export function CardChamado({ chamado }: CardChamadoProps) {
+  const router = useRouter();
+  const [expandido, setExpandido] = useState(false);
+
+  const handleExpandir = () => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    setAberto(!aberto);
+    setExpandido(!expandido);
+  };
+
+  const handlePress = () => {
+    router.push({
+      pathname: "/DetalheChamado/indexDetalheChamado",
+      params: { id: chamado.id },
+    });
   };
 
   return (
-    <View style={styles.cardContainer}>
+      <View style={styles.card}>
+              <TouchableOpacity onPress={handleExpandir} activeOpacity={0.8}>
+          <View style={styles.header}>
+            <Text style={styles.pedido}>{chamado.pedido}</Text>
+            <Text style={styles.status}>{chamado.status}</Text>
+          </View>
 
-      <View style={styles.header}>
-        <TouchableOpacity onPress={handleToggle} style={{ flex: 1 }}>
-          <Text style={styles.title}>{titulo}</Text>
+          <View style={styles.footer}>
+            <Text style={styles.info}>Cliente: {chamado.nome_cliente}</Text> // TO DO: não está pegando o nome do cliente - Verificar o que fazer
+            <Text style={styles.info}>
+              {new Date(chamado.data_agendamento).toLocaleDateString("pt-BR")}
+            </Text>
+          </View>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={onVerPress}>
-          <Text style={styles.verTexto}>Ver</Text>
-        </TouchableOpacity>
-      </View>
 
-      {aberto && (
-        <FlatList
-          data={osList}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <View style={styles.osContainer}>
-              <Text style={styles.osText}>OS - {item.codigo}</Text>
-            </View>
-          )}
-        />
-      )}
+        {expandido && (
+          <View style={styles.osContainer}>
+
+            //TO DO: Isso precisa ser uma flatlist ou uma map
+
+            <CardOS title="OS - Vazamento do refrigerador" status="Em andamento" />
+            <CardOS title="OS - Vazamento do refrigerador" status="Em andamento" />
+
+            <TouchableOpacity
+              style={styles.botaoDetalhe}
+              onPress={handlePress}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.textoBotao}>Ver mais detalhes</Text>
+            </TouchableOpacity>
+          </View>
+        )}
     </View>
   );
 }
